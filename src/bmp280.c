@@ -387,16 +387,15 @@ int32_t bmp280_comp_temp_32bit(uint32_t uncomp_temp, struct bmp280_dev *dev)
 	int32_t var2;
 	int32_t temperature = 0;
 	int8_t rslt;
-
+    
 	rslt = null_ptr_check(dev);
-
 	if (rslt == BMP280_OK) {
 		var1 = ((((uncomp_temp >> 3) - ((int32_t) dev->calib_param.dig_t1 << 1)))
 		* ((int32_t) dev->calib_param.dig_t2)) >> 11;
 		var2 = (((((uncomp_temp >> 4) - ((int32_t) dev->calib_param.dig_t1))
 		* ((uncomp_temp >> 4) - ((int32_t) dev->calib_param.dig_t1))) >> 12)
-		* ((int32_t) dev->calib_param.dig_t3)) >> 14;
-
+		* ((int32_t) dev->calib_param.dig_t3));
+        var2 >>= 14;
 		dev->calib_param.t_fine = var1 + var2;
 		temperature = (dev->calib_param.t_fine * 5 + 128) >> 8;
 	}
